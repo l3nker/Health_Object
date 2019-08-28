@@ -34,7 +34,7 @@
     <dubbo:registry address="zookeeper://127.0.0.1:2181"></dubbo:registry>
 
     <!--批量扫描-->
-    <dubbo:annotation package="com.itheima.controller" />
+    <dubbo:annotation package="com.itheima.controller.*" />
 
     <dubbo:consumer timeout="600000" check="false"/>
     <import resource="spring-jedis.xml"></import>
