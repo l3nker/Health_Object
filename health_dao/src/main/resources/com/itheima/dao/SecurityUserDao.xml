@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.dao.SecurityUserDao">
+
+    <resultMap id="UserMap" type="User">
+        <id column="id" property="id"/>
+        <result column="birthday" property="birthday"/>
+        <result column="gender" property="gender"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="remark" property="remark"/>
+        <result column="station" property="station"/>
+        <result column="telephone" property="telephone"/>
+
+        <collection property="roles" ofType="Role" column="id" select="com.itheima.dao.SecurityUserDao.searchRoles"></collection>
+    </resultMap>
+
+    <select id="searchUser" parameterType="String" resultMap="UserMap">
+         SELECT * FROM t_user u WHERE u.`username`= #{username}
+    </select>
+
+
+
+
+
+    <resultMap id="RolesMap" type="Role">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="keyword" property="keyword"/>
+        <result column="description" property="description"/>
+
+        <collection property="permissions" ofType="Permission" column="id" select="com.itheima.dao.SecurityUserDao.searchPermissions"/>
+
+    </resultMap>
+
+    <select id="searchRoles" parameterType="int" resultMap="RolesMap">
+        SELECT * FROM  t_role WHERE id IN (SELECT role_id FROM t_user_role WHERE user_id =#{id})
+    </select>
+
+
+
+    <resultMap id="PermissionMap" type="Permission">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="keyword" property="keyword"/>
+        <result column="description" property="description"/>
+    </resultMap>
+
+    <select id="searchPermissions" parameterType="int" resultMap="PermissionMap">
+        SELECT * FROM t_permission WHERE id IN (SELECT permission_id FROM t_role_permission WHERE role_id = #{id})
+    </select>
+
+</mapper>

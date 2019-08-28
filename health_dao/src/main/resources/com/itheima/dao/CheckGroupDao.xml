@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.dao.CheckGroupDao">
+
+    <insert id="addGroupData" parameterType="CheckGroup" keyProperty="id" useGeneratedKeys="true">
+        insert into t_checkgroup(code,name,sex,helpCode,remark,attention)
+            values
+      	(#{code},#{name},#{sex},#{helpCode},#{remark},#{attention})
+    </insert>
+
+    <insert id="addGroupIdAndItemId" parameterType="map">
+        INSERT INTO t_checkgroup_checkitem(checkgroup_id,checkitem_id) VALUES(#{checkGroupId},#{checkitemId})
+    </insert>
+
+    <select id="findPages"  parameterType="String"  resultType="com.itheima.pojo.CheckGroup">
+        select * from t_checkgroup
+        <if test="value != null and value.length > 0">
+            where code = #{value} or name = #{value} or helpCode = #{value}
+        </if>
+    </select>
+    <select id="findUselForm" parameterType="Integer" resultType="CheckGroup">
+        SELECT * FROM t_checkgroup WHERE id= #{id}
+    </select>
+
+    <select id="findCheckItem" resultType="CheckItem">
+        select * from t_checkitem
+    </select>
+
+    <select id="findCheckItemWhenUse" resultType="Integer" parameterType="Integer">
+        SELECT checkitem_id FROM t_checkgroup_checkitem WHERE checkgroup_id = #{id}
+    </select>
+
+    <delete id="deleteKey" parameterType="Integer">
+         delete from t_checkgroup_checkitem where checkgroup_id = #{id}
+    </delete>
+
+    <insert id="insertByGroupId" parameterType="Map">
+        insert into t_checkgroup_checkitem(checkgroup_id,checkitem_id)
+     	values
+  (#{checkGroupId},#{checkitemId})
+    </insert>
+
+    <update id="updateGroupFrom" parameterType="CheckGroup">
+        update t_checkgroup
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="helpCode != null">
+                helpCode = #{helpCode},
+            </if>
+            <if test="attention != null">
+                attention = #{attention},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    
+    <resultMap id="CheckGroupMap" type="CheckGroup">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="helpCode" property="helpCode"/>
+        <result column="sex" property="sex"/>
+        <result column="remark" property="remark"/>
+        <result column="attention" property="attention"/>
+
+        <collection property="checkItems" ofType="CheckItem" column="id" select="com.itheima.dao.CheckItemDao.findCheckItemById"></collection>
+    </resultMap>
+
+    <select id="findCheckGroupById" parameterType="int" resultMap="CheckGroupMap">
+        SELECT * FROM t_checkgroup WHERE id in(SELECT checkgroup_id FROM t_setmeal_checkgroup WHERE setmeal_id= #{setmeal_id})
+    </select>
+
+</mapper>

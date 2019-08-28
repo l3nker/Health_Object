@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.dao.CheckItemDao">
+    <!--新增-->
+    <insert id="add" parameterType="com.itheima.pojo.CheckItem">
+        insert into t_checkitem(code,name,sex,age,price,type,remark,attention)
+                      values
+        (#{code},#{name},#{sex},#{age},#{price},#{type},#{remark},#{attention})
+    </insert>
+
+    <select id="findPages"  parameterType="String"  resultType="com.itheima.pojo.CheckItem">
+       select * from t_checkitem
+        <if test="value != null and value.length > 0">
+            where code = #{value} or name = #{value}
+        </if>
+    </select>
+
+    <select id="checkById" resultType="long" parameterType="Integer">
+         SELECT COUNT(*) FROM t_checkgroup_checkitem WHERE  checkitem_id = #{checkItemId}
+    </select>
+
+    <delete id="deleteById" parameterType="Integer">
+         DELETE FROM t_checkitem WHERE id = #{checkItemId}
+    </delete>
+
+    <select id="searchItemById" resultType="CheckItem" parameterType="Integer">
+        select * from t_checkitem where id=#{id}
+    </select>
+
+    <update id="compileData" parameterType="CheckItem">
+        UPDATE t_checkitem
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="attention != null">
+                attention = #{attention},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="findItem" resultType="CheckItem">
+        select  * from t_checkitem
+    </select>
+
+
+
+
+    <select id="findCheckItemById" parameterType="int" resultType="CheckItem">
+      SELECT * FROM t_checkitem WHERE id in(SELECT checkitem_id FROM t_checkgroup_checkitem WHERE checkgroup_id = #{checkgroup_id})
+    </select>
+
+
+</mapper>
